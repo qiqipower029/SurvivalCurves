@@ -1,0 +1,50 @@
+---
+title: "Cytology_cor"
+author: "Jieqi Tu"
+date: "3/22/2021"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r import data}
+cytology = readxl::read_excel(path = "./Data/Data For Cytology Surgical Correlation_GM_332021 copy.xlsx") %>% as.data.frame()
+```
+
+```{r tidy data}
+# Remove NA
+cytology$`Variants-961_1st diagnosis` = ifelse(cytology$`Variants-961_1st diagnosis` == "n/a", NA, cytology$`Variants-961_1st diagnosis`) %>% as.numeric()
+cytology = cytology %>% 
+  filter(!is.na(cytology$`Variants-961_1st diagnosis`))
+```
+
+## Check correlations between 1st and 2nd diagnosis
+```{r correlation tests}
+# Pearson correlation
+cor(x = cytology$`Variants-961_1st diagnosis`, y = cytology$`Variants-962_2nd diagnosis`, method = "pearson")
+
+# Spearman correlation
+cor(x = cytology$`Variants-961_1st diagnosis`, y = cytology$`Variants-962_2nd diagnosis`, method = "spearman")
+```
+
+## Paired t-test
+```{r paired t test}
+# Paired test
+# Check the assumption
+shapiro.test(cytology$`Variants-961_1st diagnosis`)
+shapiro.test(cytology$`Variants-962_2nd diagnosis`)
+
+t.test(x = cytology$`Variants-961_1st diagnosis`, y = cytology$`Variants-962_2nd diagnosis`, paired = T)
+```
+
+## Wilcoxon rank test
+```{r wilcoxon rank test}
+# Wilcoxon rank test
+wilcox.test(x = cytology$`Variants-961_1st diagnosis`, y = cytology$`Variants-962_2nd diagnosis`, paired = T)
+```
+
