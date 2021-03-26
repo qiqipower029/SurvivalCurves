@@ -21,6 +21,9 @@ cytology = readxl::read_excel(path = "./Data/Data For Cytology Surgical Correlat
 cytology$`Variants-961_1st diagnosis` = ifelse(cytology$`Variants-961_1st diagnosis` == "n/a", NA, cytology$`Variants-961_1st diagnosis`) %>% as.numeric()
 cytology = cytology %>% 
   filter(!is.na(cytology$`Variants-961_1st diagnosis`))
+
+library(openxlsx)
+write.xlsx(cytology, "cytology.xlsx")
 ```
 
 ## Check correlations between 1st and 2nd diagnosis
